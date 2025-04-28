@@ -128,96 +128,6 @@ export async function createMonthlySheetIfNotExists(baseSheetName, date = new Da
 // Get data from a specific sheet
 export async function getSheetData(baseSheetName, date = new Date()) {
   try {
-    const sheetName = getMonthlySheetName(baseSheetName, date)
-
-    // For demo purposes, we'll return mock data based on the actual sheet structure
-    // In a real implementation, this would fetch from Google Sheets
-
-    if (baseSheetName === "BÁN HÀNG") {
-      return [
-        {
-          customerName: "THÁI QUỲNH NHƯ",
-          productImage: "/placeholder.svg?height=200&width=200",
-          productName: "Áo thun",
-          color: "Đen",
-          size: "6",
-          quantity: 1,
-          total: 99000,
-          status: "NHẬN ĐƠN",
-          linkFb: "",
-          contactInfo: "",
-          note: "",
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
-        },
-        {
-          customerName: "NGUYEN NHO TUONG LINH",
-          productImage: "/placeholder.svg?height=200&width=200",
-          productName: "Áo thun",
-          color: "",
-          size: "7",
-          quantity: 1,
-          total: 119000,
-          status: "NHẬN ĐƠN",
-          linkFb: "",
-          contactInfo: "",
-          note: "",
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
-        },
-      ]
-    } else if (baseSheetName === "NHẬP HÀNG") {
-      return [
-        {
-          productId: "SP001",
-          productName: "Áo thun",
-          quantity: 10,
-          price: 80000,
-          date: "2023-04-10T08:30:00Z",
-          supplier: "Nhà cung cấp A",
-          imageUrl: "/placeholder.svg?height=200&width=200",
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
-        },
-        {
-          productId: "SP002",
-          productName: "Quần short",
-          quantity: 5,
-          price: 70000,
-          date: "2023-04-12T10:15:00Z",
-          supplier: "Nhà cung cấp B",
-          imageUrl: "/placeholder.svg?height=200&width=200",
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
-        },
-      ]
-    } else if (baseSheetName === "CÔNG TÁC VIÊN") {
-      return [
-        {
-          name: "Nguyễn Văn A",
-          phone: "0123456789",
-          address: "Hà Nội",
-          product: "Áo thun",
-          quantity: 2,
-          commission: 20000,
-          total: 40000,
-          status: "Đã thanh toán",
-          note: "",
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
-        },
-        {
-          name: "Trần Thị B",
-          phone: "0987654321",
-          address: "TP HCM",
-          product: "Quần short",
-          quantity: 1,
-          commission: 15000,
-          total: 15000,
-          status: "Chưa thanh toán",
-          note: "",
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
-        },
-      ]
-    }
-
-    // If we get here, return empty array
-    return []
 
     // In a real implementation, this would be:
     /*
@@ -297,7 +207,7 @@ export async function getSheetData(baseSheetName, date = new Date()) {
 export async function appendSheetRow(baseSheetName, rowData, date = new Date()) {
   try {
     const sheetName = getMonthlySheetName(baseSheetName, date)
-
+    console.log('-------------gg sheet appendSheetRow-------------------');
     // For demo purposes, we'll just log the data
     console.log(`Appending to ${sheetName}:`, rowData)
 

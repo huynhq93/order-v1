@@ -241,30 +241,36 @@ async function getSheetData(baseSheetName: string, date = new Date()) {
       // Skip the first row (header)
       return rows.slice(1).map(row => {
         return {
-          productId: row[0] || '',
-          productName: row[1] || '',
-          quantity: row[2] || 0,
-          price: row[3] || 0,
-          date: row[4] || '',
-          supplier: row[5] || '',
-          imageUrl: row[6] || '',
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
+          date: row[0] || "",
+          customerName: row[1] || "",
+          productImage: row[2] || "",
+          productName: row[3] || "",
+          color: row[4] || "",
+          size: row[5] || "",
+          quantity: row[6] || "",
+          total: row[7] || "",
+          status: row[8] || "",
+          facebookLink: row[9] || "",
+          phoneAddress: row[10] || "",
+          note: row[11] || "",
         }
       }).filter(item => item.productName); // Filter out empty rows
     } else if (baseSheetName === SHEET_TYPES.COLLABORATORS) {
       // Skip the first row (header)
       return rows.slice(1).map(row => {
         return {
-          name: row[0] || '',
-          phone: row[1] || '',
-          address: row[2] || '',
-          product: row[3] || '',
-          quantity: row[4] || 0,
-          commission: row[5] || 0,
-          total: row[6] || 0,
-          status: row[7] || '',
-          note: row[8] || '',
-          month: `${date.getMonth() + 1}/${date.getFullYear()}`,
+          date: row[0] || "",
+          customerName: row[1] || "",
+          productImage: row[2] || "",
+          productName: row[3] || "",
+          color: row[4] || "",
+          size: row[5] || "",
+          quantity: row[6] || "",
+          total: row[7] || "",
+          status: row[8] || "",
+          facebookLink: row[9] || "",
+          phoneAddress: row[10] || "",
+          note: row[11] || "",
         }
       }).filter(item => item.name); // Filter out empty rows
     }
@@ -311,6 +317,15 @@ async function appendSheetRow(baseSheetName: string, rowData: any[], date = new 
       nextRow = Math.max(nextRow, 2) // Start at row 2 (after header)
     }
     
+    // const day = String(date.getDate()).padStart(2, '0');
+    // const month = String(date.getMonth() + 1).padStart(2, '0'); // Months start from 0
+    // const year = date.getFullYear();
+    
+    // const formatted = `${day}/${month}/${year}`;
+
+    // console.log('--------------------------------');
+    // console.log([...[formatted], ...rowData]);
+  
     await sheets.spreadsheets.values.update({
       spreadsheetId,
       range: `${sheetName}!A${nextRow}`,
@@ -322,7 +337,7 @@ async function appendSheetRow(baseSheetName: string, rowData: any[], date = new 
 
     return true
   } catch (error) {
-    console.error(`Error appending to ${baseSheetName}:`, error)
+    console.error(`Error appending to ${baseSheetName}:`, error.message)
     throw new Error(`Failed to append to ${baseSheetName}`)
   }
 }
@@ -360,7 +375,7 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const { action, sheetType, data, date: dateString } = body
-
+    console.log('-------------route sheet PÓT-------------------');
     if (!action || !sheetType) {
       return NextResponse.json({ error: "Action and sheet type are required" }, { status: 400 })
     }

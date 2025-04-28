@@ -9,7 +9,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
-import ImageUpload from "./image-upload"
+import ImagePreview from "./image-preview"
 import { SHEET_TYPES } from "@/lib/sheet-config"
 
 const formSchema = z.object({
@@ -27,7 +27,8 @@ const formSchema = z.object({
 
 export default function AddOrderForm({ onOrderAdded, selectedDate }) {
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [imageUrl, setImageUrl] = useState("")
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [previewImage, setPreviewImage] = useState(null);
 
   const form = useForm({
     resolver: zodResolver(formSchema),
@@ -45,21 +46,47 @@ export default function AddOrderForm({ onOrderAdded, selectedDate }) {
     },
   })
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setUploadImage(file);
+      const reader = new FileReader();
+      reader.onload = () => setPreviewImage(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
+
   async function onSubmit(values) {
     setIsSubmitting(true)
     try {
+
+      if (!imageFile) {
+        alert("Vui lòng chọn ảnh trước khi submit.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("file", imageFile);
+
+      const responseImg = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const image = await responseImg.json()
+
       const orderData = {
         ...values,
-        productImage: imageUrl,
+        productImage: image.url,
         total: values.price * values.quantity,
       }
 
       // Format the data for Google Sheets
       const rowData = [
+        `${selectedDate.getDate()}/${selectedDate.getMonth() + 1}`,
         orderData.customerName,
-        orderData.productImage || "",
+        orderData.productImage ? `=IMAGE("${orderData.productImage}")` : "",
         orderData.productName,
-        "", // Empty column for SẢN PHẨM duplicate
         orderData.color || "",
         orderData.size || "",
         orderData.quantity,
@@ -89,7 +116,7 @@ export default function AddOrderForm({ onOrderAdded, selectedDate }) {
 
       onOrderAdded(orderData)
       form.reset()
-      setImageUrl("")
+      setImageFile(null)
     } catch (error) {
       console.error("Error adding order:", error)
     } finally {
@@ -99,7 +126,7 @@ export default function AddOrderForm({ onOrderAdded, selectedDate }) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 overflow-y-auto max-h-[600px]">
         <div className="grid grid-cols-2 gap-4">
           <FormField
             control={form.control}
@@ -256,12 +283,12 @@ export default function AddOrderForm({ onOrderAdded, selectedDate }) {
 
         <div>
           <FormLabel>Hình ảnh sản phẩm</FormLabel>
-          <ImageUpload onImageUploaded={setImageUrl} />
-          {imageUrl && (
+          <ImagePreview onFileSelected={setImageFile} />
+          {/* {imageUrl && (
             <div className="mt-2">
               <img src={imageUrl || "/placeholder.svg"} alt="Product" className="h-24 w-auto object-cover rounded-md" />
             </div>
-          )}
+          )} */}
         </div>
 
         <Button type="submit" className="w-full" disabled={isSubmitting}>

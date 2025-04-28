@@ -4,12 +4,13 @@ import { appendSheetRow } from "@/lib/google-sheets"
 
 export async function addOrder(orderData, date = new Date()) {
   try {
+    console.log('-------------order-action addOrder-------------------');
     // Format the data for Google Sheets based on the actual sheet structure
     const rowData = [
+      date.toString(),
       orderData.customerName,
       orderData.productImage || "",
       orderData.productName,
-      "", // Empty column for SẢN PHẨM duplicate
       orderData.color || "",
       orderData.size || "",
       orderData.quantity,

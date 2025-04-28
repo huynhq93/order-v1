@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -34,6 +34,20 @@ export default function OrdersTable({ initialData, selectedDate }) {
     }
   }
 
+  const tableRef = useRef(null);
+
+  const scrollToBottom = () => {
+    if (tableRef.current) {
+      tableRef.current.scrollTop = tableRef.current.scrollHeight;
+    }
+  };
+
+  const scrollToTop = () => {
+    if (tableRef.current) {
+      tableRef.current.scrollTop = 0;
+    }
+  };
+
   return (
     <Card>
       <CardContent className="p-6">
@@ -52,20 +66,20 @@ export default function OrdersTable({ initialData, selectedDate }) {
           </Dialog>
         </div>
 
-        <div className="rounded-md border overflow-x-auto">
+        <div className="rounded-md border overflow-x-auto overflow-y-auto max-h-[600px]" ref={tableRef}>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>DATE</TableHead>
-                <TableHead>TÊN KH</TableHead>
-                <TableHead>SẢN PHẨM</TableHead>
-                <TableHead>HÌNH ẢNH</TableHead>
-                <TableHead>MÀU SẮC</TableHead>
-                <TableHead>SIZE</TableHead>
-                <TableHead>SL</TableHead>
-                <TableHead>TỔNG</TableHead>
-                <TableHead>TRẠNG THÁI</TableHead>
-                <TableHead></TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">DATE</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">TÊN KH</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">HÌNH ẢNH</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">SẢN PHẨM</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">MÀU SẮC</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">SIZE</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">SL</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">TỔNG</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm">TRẠNG THÁI</TableHead>
+                <TableHead className="bg-gray-100 text-gray-700 uppercase text-sm"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -73,7 +87,7 @@ export default function OrdersTable({ initialData, selectedDate }) {
                 orders.map((order, index) => (
                   <TableRow key={index}>
                     <TableCell>{order.date}</TableCell>
-                    <TableCell className="font-medium">{order.customerName}</TableCell>
+                    <TableCell className="font-medium max-w-[250px] truncate cursor-pointer">{order.customerName}</TableCell>
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         {order.productImage && (
@@ -83,7 +97,6 @@ export default function OrdersTable({ initialData, selectedDate }) {
                             className="h-10 w-10 rounded-md object-cover"
                           />
                         )}
-                        <span>{order.productName}</span>
                       </div>
                     </TableCell>
                     <TableCell>{order.productName}</TableCell>
@@ -123,6 +136,12 @@ export default function OrdersTable({ initialData, selectedDate }) {
             </TableBody>
           </Table>
         </div>
+
+        {/* Nút cuộn */}
+      <div className="flex justify-between p-2">
+        <Button onClick={scrollToTop}>Lên trên</Button>
+        <Button onClick={scrollToBottom}>Cuối</Button>
+      </div>
       </CardContent>
     </Card>
   )
