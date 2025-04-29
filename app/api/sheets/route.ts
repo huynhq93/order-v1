@@ -105,6 +105,7 @@ async function createMonthlySheetIfNotExists(baseSheetName: string, date = new D
 // Get data from a specific sheet
 async function getSheetData(baseSheetName: string, date = new Date()) {
   try {
+    console.log('-------------getSheetData 11111111-------------------');
     const sheetName = getMonthlySheetName(baseSheetName, date)
 
     // For demo purposes, we'll return mock data based on the actual sheet structure
@@ -220,8 +221,9 @@ async function getSheetData(baseSheetName: string, date = new Date()) {
       console.log('--------------------------------')
       console.log(response)
       // Skip the first 3 rows (headers)
-      return rows.slice(3).map(row => {
+      return rows.slice(3).map((row, index) => {
         return {
+          rowIndex: index,
           date: row[0] || '',
           customerName: row[1] || '',
           productImage: row[2] || '',
